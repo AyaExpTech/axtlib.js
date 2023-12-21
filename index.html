@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <script type="module">
+        // extendsは一括インポートできます
+        import "./extends/_all.js";
+        // originalは必要なものを個別インポートしてください
+        import DatabaseStorage from "./original/DatabaseStorage.js";
+        import LayerableOffscreenCanvas from "./original/LayerableOffscreenCanvas.js";
+        // コンソールで打てるようにdebugger入れときます
+        console.log("import completed!");
+        debugger;
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>
