@@ -4,6 +4,9 @@
 
 ## `.prototype.layer`
 
+> - First Appearance : `ver0.1.0`
+> - Latest Update : `ver0.1.0`
+
 - 各レイヤーの内容を表す画像などの配列です。
     - 各要素は、`OffscreenCanvasRenderingContext2d.prototype.drawImage()`が受け付けるオブジェクトである必要があります。
 
@@ -14,6 +17,9 @@
 ```
 
 ## `.prototype.composite()`
+
+> - First Appearance : `ver0.1.0`
+> - Latest Update : `ver0.1.0`
 
 - このキャンバスの内容を、`.prototype.layer`を順番に描画した結果にします。
     - 配列の先頭が下のレイヤー、末尾が上のレイヤーです。

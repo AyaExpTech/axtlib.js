@@ -8,6 +8,9 @@ Web Storage APIの`LocalStorage`に近いコードで`IndexedDB`を利用する�
 
 ## `.delete()`
 
+> - First Appearance : `ver0.1.0`
+> - Latest Update : `ver0.1.0`
+
 - 現在存在しているdatabase storageを消去します。
 
 > - 引数は不要です。
@@ -19,6 +22,9 @@ Web Storage APIの`LocalStorage`に近いコードで`IndexedDB`を利用する�
 ```
 
 ## `.initialize()`
+
+> - First Appearance : `ver0.1.0`
+> - Latest Update : `ver0.1.0`
 
 - database storageを初期化します。
 
@@ -33,6 +39,9 @@ Web Storage APIの`LocalStorage`に近いコードで`IndexedDB`を利用する�
 
 ## `.getMap()`
 
+> - First Appearance : `ver0.1.0`
+> - Latest Update : `ver0.1.0`
+
 - 現在database storageに保存されているすべての値の一覧を`Map`で取得します。
 
 > - 引数は不要です。
@@ -45,6 +54,9 @@ Web Storage APIの`LocalStorage`に近いコードで`IndexedDB`を利用する�
 
 ## `.getItem()`
 
+> - First Appearance : `ver0.1.0`
+> - Latest Update : `ver0.1.0`
+
 - キーの名称を渡し、そのキーに対応する値を返します。
 
 ```js
@@ -55,6 +67,9 @@ Web Storage APIの`LocalStorage`に近いコードで`IndexedDB`を利用する�
 ```
 
 ## `.setItem()`
+
+> - First Appearance : `ver0.1.0`
+> - Latest Update : `ver0.1.0`
 
 - キーの名前と値を渡し、ストレージにキーを追加・更新します。
 
@@ -68,6 +83,9 @@ Web Storage APIの`LocalStorage`に近いコードで`IndexedDB`を利用する�
 
 ## `.removeItem()`
 
+> - First Appearance : `ver0.1.0`
+> - Latest Update : `ver0.1.0`
+
 - キーの名前を渡し、database storageからキーと値を削除します。
 
 ```js
@@ -78,6 +96,9 @@ Web Storage APIの`LocalStorage`に近いコードで`IndexedDB`を利用する�
 ```
 
 ## `.clear()`
+
+> - First Appearance : `ver0.1.0`
+> - Latest Update : `ver0.1.0`
 
 - database storageに格納されているすべてのキーを消去します。
 
@@ -90,6 +111,9 @@ Web Storage APIの`LocalStorage`に近いコードで`IndexedDB`を利用する�
 ```
 
 ## `.key()`
+
+> - First Appearance : `ver0.1.0`
+> - Latest Update : `ver0.1.0`
 
 - 数値を渡し、database storage内でn番目のキーの名称を返します。
 
