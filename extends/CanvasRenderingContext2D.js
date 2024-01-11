@@ -82,17 +82,19 @@ CanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, blur = 0,
  *      @param {Object} options - 描画時のオプション
  *      @param {String|CanvasGradient|CanvasPattern} options.fill - 塗りつぶし色(塗りつぶさない場合はnullishを指定)
  *      @param {String|CanvasGradient|CanvasPattern} options.stroke - 輪郭色(塗りつぶさない場合はnullishを指定)
- *      @param {Object} [options.shadow] - 影の描画に関する設定
- *      @param {Number} [options.shadow.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadow.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadow.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadow.color] - 影の色
+ *      @param {Object} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定
+ *      @param {Number} [options.shadowFill.x] - 影の右方向ずらし量(px)
+ *      @param {Number} [options.shadowFill.y] - 影の下方向ずらし量(px)
+ *      @param {Number} [options.shadowFill.blur] - 影のぼかし量(px)
+ *      @param {String} [options.shadowFill.color] - 影の色
+ *      @param {Object} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定
+ *      @param {Number} [options.shadowStroke.x] - 影の右方向ずらし量(px)
+ *      @param {Number} [options.shadowStroke.y] - 影の下方向ずらし量(px)
+ *      @param {Number} [options.shadowStroke.blur] - 影のぼかし量(px)
+ *      @param {String} [options.shadowStroke.color] - 影の色
  *  
  *  ※以下、`options.stroke`が`"none"`でない場合のみ有効
  *      @param {Number} [options.thickness = 1] - 輪郭の太さ(px)
- *  
- *  ※以下、`kind`が`"ellipse"`・`"path"`の場合のみ有効
- *      @param {"nonzero"|"evenodd"} [options.fillRule = "nonzero"] - 塗りつぶしルール
  *  
  *  ※以下、`kind`が`"rectangle"`・`"ellipse"`の場合のみ有効
  *      @param {Number} options.width - 図形の描画幅
@@ -117,15 +119,36 @@ CanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, blur = 0,
  *  
  *  ※以下、`kind`が`"path"`の場合のみ有効
  *      @param {String} options.d - 描かれるパスを、[SVGのd属性](https://developer.mozilla.org/ja/docs/Web/SVG/Attribute/d)と同様の形式で記述する。絶対座標の原点はoptions.posXとoptions.posYに依存
+ *      @param {"nonzero"|"evenodd"} [options.fillRule = "nonzero"] - 塗りつぶしルール
  */
-CanvasRenderingContext2D.prototype.axt_draw = (kind, options) => {
+CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
     /** ================================================================
      * 影を設定する
     ================================================================= */
-    this.shadowOffsetX = options?.shadow?.x ?? this.shadowOffsetX;
-    this.shadowOffsetY = options?.shadow?.y ?? this.shadowOffsetY;
-    this.shadowBlur = options?.shadow?.blur ?? this.shadowBlur;
-    this.shadowColor = options?.shadow?.color ?? this.shadowColor;
+    const shadowPredecessor = {
+        "shadowOffsetX": this.shadowOffsetX,
+        "shadowOffsetY": this.shadowOffsetY,
+        "shadowBlur": this.shadowBlur,
+        "shadowColor": this.shadowColor
+    }
+    const changeShadowSetting_fill = () => {
+        this.shadowOffsetX = options?.shadowFill?.x ?? shadowPredecessor.shadowOffsetX;
+        this.shadowOffsetY = options?.shadowFill?.y ?? shadowPredecessor.shadowOffsetY;
+        this.shadowBlur = options?.shadowFill?.blur ?? shadowPredecessor.shadowBlur;
+        this.shadowColor = options?.shadowFill?.color ?? shadowPredecessor.shadowColor;
+    };
+    const changeShadowSetting_stroke = () => {
+        this.shadowOffsetX = options?.shadowStroke?.x ?? shadowPredecessor.shadowOffsetX;
+        this.shadowOffsetY = options?.shadowStroke?.y ?? shadowPredecessor.shadowOffsetY;
+        this.shadowBlur = options?.shadowStroke?.blur ?? shadowPredecessor.shadowBlur;
+        this.shadowColor = options?.shadowStroke?.color ?? shadowPredecessor.shadowColor;
+    };
+    const intlShadowSetting = () => {
+        this.shadowOffsetX = shadowPredecessor.shadowOffsetX;
+        this.shadowOffsetY = shadowPredecessor.shadowOffsetY;
+        this.shadowBlur = shadowPredecessor.shadowBlur;
+        this.shadowColor = shadowPredecessor.shadowColor;
+    };
 
     /** ================================================================
      * alignを解析して水平方向と垂直方向のalignに分割する
@@ -214,7 +237,7 @@ CanvasRenderingContext2D.prototype.axt_draw = (kind, options) => {
     /** ================================================================
      * 矩形 ("rectangle")
     ================================================================= */
-    if (options.kind === "rectangle") {
+    if (kind === "rectangle") {
         /* ==== 現時点でのfillStyle・strokeStyle・lineWidthをメモしておく ==== */
         const predecessor = {
             "fillStyle": this.fillStyle,
@@ -224,10 +247,13 @@ CanvasRenderingContext2D.prototype.axt_draw = (kind, options) => {
         /* ==== 関係する描画設定プロパティを指定通りに変更する ==== */
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [options.fill, options.stroke, options.thickness];
         /* ==== 矩形を描画する ==== */
+        changeShadowSetting_fill();
         options.fill == null ? void 0
             : this.fillRect(specifiedPos.left, specifiedPos.top, options.width, options.height);
+        changeShadowSetting_stroke();
         options.stroke == null ? void 0
             : this.strokeRect(specifiedPos.left, specifiedPos.top, options.width, options.height);
+        intlShadowSetting();
         /* ==== メモしてあったfillStyle・strokeStyle・lineWidthをもとに戻す ==== */
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [predecessor.fillStyle, predecessor.strokeStyle, predecessor.lineWidth];
         return;
@@ -237,7 +263,7 @@ CanvasRenderingContext2D.prototype.axt_draw = (kind, options) => {
      * 楕円 ("ellipse")
      * (※3次ベジェ曲線による近似を用いて、90度ごとに4分割して描画します)
     ================================================================= */
-    if (options.kind === "ellipse") {
+    if (kind === "ellipse") {
         /* ==== 現時点でのfillStyle・strokeStyle・lineWidthをメモしておく ==== */
         const predecessor = {
             "fillStyle": this.fillStyle,
@@ -265,10 +291,13 @@ CanvasRenderingContext2D.prototype.axt_draw = (kind, options) => {
         /* -- パスを閉じる -- */
         this.closePath();
         /* ==== 描画する ==== */
+        changeShadowSetting_fill();
         options.fill == null ? void 0
-            : this.fill(options?.fillRule ?? "nonzero");
+            : this.fill();
+        changeShadowSetting_stroke();
         options.stroke == null ? void 0
             : this.stroke();
+        intlShadowSetting();
         /* ==== メモしてあったfillStyle・strokeStyle・lineWidthをもとに戻す ==== */
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [predecessor.fillStyle, predecessor.strokeStyle, predecessor.lineWidth];
         return;
@@ -277,7 +306,7 @@ CanvasRenderingContext2D.prototype.axt_draw = (kind, options) => {
     /** ================================================================
      * テキスト ("text")
     ================================================================= */
-    if (options.kind === "text") {
+    if (kind === "text") {
         /* ==== 現時点でのfillStyle・strokeStyle・lineWidthをメモしておく ==== */
         const predecessor = {
             "fillStyle": this.fillStyle,
@@ -291,10 +320,13 @@ CanvasRenderingContext2D.prototype.axt_draw = (kind, options) => {
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [options.fill, options.stroke, options.thickness];
         [this.textAlign, this.textBaseline] = [specifiedAlign.horizontal, specifiedAlign.vertical];
         /* ==== fontプロパティの文字列をoptions.fontから作成して設定する ==== */
-        this.font = `${[options.font.style, options.font.caps, options.font.weight, options.font.stretch].filter(v => v && v != "normal").join(" ")} ${options.font.size ?? "1rem"}/${options.font.lineHeight ?? "1"} ${options.font.family ?? "sans-serif"}`.trim();
+        this.font = `${[options?.font?.style, options?.font?.caps, options?.font?.weight, options?.font?.stretch].filter(v => v && v != "normal").join(" ")} ${options?.font?.size ?? "1rem"}/${options?.font?.lineHeight ?? "1"} ${options?.font?.family ?? "sans-serif"}`.trim();
         /* ==== テキストを描画する ==== */
-        fill === "none" ? void 0 : this.fillText(options.text, options.posX, options.posY, options.maxWidth || undefined);
-        stroke === "none" ? void 0 : this.strokeText(options.text, options.posX, options.posY, options.maxWidth || undefined);
+        changeShadowSetting_fill();
+        options.fill == null ? void 0 : this.fillText(options.text, options.posX, options.posY, options.maxWidth || undefined);
+        changeShadowSetting_stroke();
+        options.stroke == null ? void 0 : this.strokeText(options.text, options.posX, options.posY, options.maxWidth || undefined);
+        intlShadowSetting();
         /* ==== メモしてあった各プロパティをもとに戻す ==== */
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [predecessor.fillStyle, predecessor.strokeStyle, predecessor.lineWidth];
         [this.font, this.textAlign, this.textBaseline] = [predecessor.font, predecessor.textAlign, predecessor.textBaseline];
@@ -304,7 +336,7 @@ CanvasRenderingContext2D.prototype.axt_draw = (kind, options) => {
     /** ================================================================
      * パスコマンド ("path")
     ================================================================= */
-    if (options.kind === "path") {
+    if (kind === "path") {
         /* ==== 現時点でのfillStyle・strokeStyle・lineWidthをメモしておく ==== */
         const predecessor = {
             "fillStyle": this.fillStyle,
@@ -316,10 +348,13 @@ CanvasRenderingContext2D.prototype.axt_draw = (kind, options) => {
         /* ==== パスを宣言する ==== */
         const pathObj = new Path2D(options.d);
         /* ==== 描画する ==== */
+        changeShadowSetting_fill();
         options.fill == null ? void 0
             : this.fill(pathObj, options?.fillRule ?? "nonzero");
+        changeShadowSetting_stroke();
         options.stroke == null ? void 0
             : this.stroke(pathObj);
+        intlShadowSetting();
         /* ==== メモしてあったfillStyle・strokeStyle・lineWidthをもとに戻す ==== */
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [predecessor.fillStyle, predecessor.strokeStyle, predecessor.lineWidth];
         return;
