@@ -1,3 +1,0 @@
-# `CanvasRenderingContext2D`
-
-
