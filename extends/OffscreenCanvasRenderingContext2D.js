@@ -121,7 +121,7 @@ OffscreenCanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, 
  *      @param {String} options.d - 描かれるパスを、[SVGのd属性](https://developer.mozilla.org/ja/docs/Web/SVG/Attribute/d)と同様の形式で記述する。絶対座標の原点はoptions.posXとoptions.posYに依存
  *      @param {"nonzero"|"evenodd"} [options.fillRule = "nonzero"] - 塗りつぶしルール
  */
-CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
+OffscreenCanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
     /** ================================================================
      * 影を設定する
     ================================================================= */
