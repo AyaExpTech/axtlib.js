@@ -3,6 +3,23 @@
 綾急技研制作の、JavaScript拡張ライブラリです。
 既存クラスの拡張、メソッドの追加などを行います。
 
+## 導入方法
+
+module環境に限り、以下のようなコードでインポートできます。  
+(バージョン名は適宜変更してください。)
+```js
+// extends
+import "https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@v0.3.0/extends/CanvasRenderingContext2D.js";
+// original
+import DatabaseStorage from "https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@v0.3.0/original/DatabaseStorage.js";
+```
+
+axtlib.jsの既存クラス拡張をすべて読み込む場合は、以下のコードを用いることもできます。  
+(バージョン名は適宜変更してください。)
+```js
+import "https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@v0.3.0/extends/extends/_all.js";
+```
+
 ## License
 
 Copyright (c) 2023- AyaExpTech, Ayasaka-Koto
