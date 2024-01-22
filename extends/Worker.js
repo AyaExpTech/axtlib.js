@@ -5,8 +5,8 @@
  */
 Worker.create = relativePath => {
     try {
-        return new Worker(URL.createObjectURL(new Blob(['importScripts("' + location.href.replace(/\\/g, '/').replace(/\/[^\/]*$/, '/') + relativePath + '");'], { type: 'text/javascript' })));
-    } catch (e) {
         return new Worker(relativePath);
+    } catch (e) {
+        return new Worker(URL.createObjectURL(new Blob(['importScripts("' + location.href.replace(/\\/g, '/').replace(/\/[^\/]*$/, '/') + relativePath + '");'], { type: 'text/javascript' })));
     }
 };
