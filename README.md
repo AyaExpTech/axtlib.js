@@ -30,6 +30,8 @@ module環境でない場合、Dynamic importを使うことができます。
 (async () => void await import("./extends/_all.js"))()
 ```
 
+> できれば使いやすさの観点から「非module環境でもimportできる仕組み」「originalを含めて一括で読み込む仕組み」を用意したいんですが……
+
 ## License
 
 Copyright (c) 2023- AyaExpTech, Ayasaka-Koto
