@@ -1,7 +1,7 @@
 # `EasingConverter.getControlPoints()`
 
 > - First Appearance : `ver0.4.0`
-> - Latest Update : `ver0.4.0`
+> - Latest Update : `ver0.4.1`
 
 - 指定された関数の3次ベジェ曲線の制御点の座標を取得します。
 

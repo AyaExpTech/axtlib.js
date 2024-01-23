@@ -1,7 +1,7 @@
 # `EasingConverter.getList()`
 
 > - First Appearance : `ver0.4.0`
-> - Latest Update : `ver0.4.0`
+> - Latest Update : `ver0.4.1`
 
 - 利用できる関数の一覧を取得します。
 
