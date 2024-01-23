@@ -6,9 +6,9 @@ export default class EasingConverter {
      */
     static getList() {
         return [
-            "linear_In",
-            "linear_Out",
-            "linear_InOut",
+            "Linear_In",
+            "Linear_Out",
+            "Linear_InOut",
             "Sine_In",
             "Sine_Out",
             "Sine_InOut",
@@ -45,11 +45,11 @@ export default class EasingConverter {
         }
         // 指定された関数でイージングした値を返す
         switch (easing) {
-            case "linear_In":
+            case "Linear_In":
                 return x;
-            case "linear_Out":
+            case "Linear_Out":
                 return x;
-            case "linear_InOut":
+            case "Linear_InOut":
                 return x;
             case "Sine_In":
                 return 1 - Math.cos((x * Math.PI) / 2);
@@ -109,11 +109,11 @@ export default class EasingConverter {
      */
     static getControlPoints(easing) {
         switch (easing) {
-            case "linear_In":
+            case "Linear_In":
                 return [0, 0, 1, 1];
-            case "linear_Out":
+            case "Linear_Out":
                 return [0, 0, 1, 1];
-            case "linear_InOut":
+            case "Linear_InOut":
                 return [0, 0, 1, 1];
             case "Sine_In":
                 return [0.47, 0, 0.745, 0.715];
