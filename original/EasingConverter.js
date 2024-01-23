@@ -92,6 +92,68 @@ export default class EasingConverter {
         }
     }
     /**
+     * 指定された種類のイージング関数で、イージング後の値(y)からイージング前の値(x)を求めます。(`convert()`の逆関数)
+     * @param {String} easing
+     * @param {Number} y - イージング後の値 (0〜1)
+     * @returns {Number} - イージング前の値
+     */
+    static invert(easing, y) {
+        // 0以下の値は0に、1以上の値は1にする
+        if (x <= 0) {
+            return 0;
+        }
+        else if (x >= 1) {
+            return 1;
+        }
+        // 指定された関数でイージングする前の値を返す
+        switch (easing) {
+            case "Linear_In":
+                return y;
+            case "Linear_Out":
+                return y;
+            case "Linear_InOut":
+                return y;
+            case "Sine_In":
+                return 2 * Math.asin(1 - y) / Math.PI;
+            case "Sine_Out":
+                return 2 * Math.asin(y) / Math.PI;
+            case "Sine_InOut":
+                return Math.asin(1 - 2 * y) / Math.PI;
+            case "Quad_In":
+                return Math.sqrt(y);
+            case "Quad_Out":
+                return 1 - Math.sqrt(1 - y);
+            case "Quad_InOut":
+                return x < 0.5 ? Math.sqrt(y / 2) : 1 - Math.sqrt(1 - 2 * y) / 2;
+            case "Cubic_In":
+                return Math.cbrt(y);
+            case "Cubic_Out":
+                return 1 - Math.cbrt(1 - y);
+            case "Cubic_InOut":
+                return x < 0.5 ? Math.cbrt(y / 4) : 1 - Math.cbrt(1 - 2 * y) / 2;
+            case "Quart_In":
+                return Math.sqrt(Math.sqrt(y));
+            case "Quart_Out":
+                return 1 - Math.sqrt(Math.sqrt(1 - y));
+            case "Quart_InOut":
+                return x < 0.5 ? Math.sqrt(Math.sqrt(y / 8)) : 1 - Math.sqrt(Math.sqrt(1 - 2 * y)) / 2;
+            case "Expo_In":
+                return Math.log2(y) / 10 + 1;
+            case "Expo_Out":
+                return 0 - Math.log2(1 - y) / 10;
+            case "Expo_InOut":
+                return x < 0.5 ? Math.log2(y * 2) / 20 + 1 / 2 : 1 / 2 - Math.log2(2 - 2 * y) / 20;
+            case "Circ_In":
+                return Math.sqrt(2 * y - 2 * y ** 2);
+            case "Circ_Out":
+                return 1 + Math.sqrt(1 - y ** 2);
+            case "Circ_InOut":
+                return x < 0.5 ? y - y ** 2 : 1 - Math.sqrt(4 * y - 4 * y ** 2) / 2;
+            default:
+                return x;
+        }
+    }
+    /**
      * 指定された関数で、指定範囲の値をイージングします。
      * @param {String} easing
      * @param {Number} x - min〜maxの値
