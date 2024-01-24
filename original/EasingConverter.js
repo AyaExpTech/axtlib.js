@@ -114,11 +114,11 @@ export default class EasingConverter {
             case "Linear_InOut":
                 return y;
             case "Sine_In":
-                return 2 * Math.asin(1 - y) / Math.PI;
+                return 2 * Math.acos(1 - y) / Math.PI;
             case "Sine_Out":
                 return 2 * Math.asin(y) / Math.PI;
             case "Sine_InOut":
-                return Math.asin(1 - 2 * y) / Math.PI;
+                return Math.acos(1 - 2 * y) / Math.PI;
             case "Quad_In":
                 return Math.sqrt(y);
             case "Quad_Out":
