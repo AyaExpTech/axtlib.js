@@ -99,10 +99,10 @@ export default class EasingConverter {
      */
     static invert(easing, y) {
         // 0以下の値は0に、1以上の値は1にする
-        if (x <= 0) {
+        if (y <= 0) {
             return 0;
         }
-        else if (x >= 1) {
+        else if (y >= 1) {
             return 1;
         }
         // 指定された関数でイージングする前の値を返す
@@ -124,33 +124,33 @@ export default class EasingConverter {
             case "Quad_Out":
                 return 1 - Math.sqrt(1 - y);
             case "Quad_InOut":
-                return x < 0.5 ? Math.sqrt(y / 2) : 1 - Math.sqrt(1 - 2 * y) / 2;
+                return y < 0.5 ? Math.sqrt(y / 2) : 1 - Math.sqrt(1 - 2 * y) / 2;
             case "Cubic_In":
                 return Math.cbrt(y);
             case "Cubic_Out":
                 return 1 - Math.cbrt(1 - y);
             case "Cubic_InOut":
-                return x < 0.5 ? Math.cbrt(y / 4) : 1 - Math.cbrt(1 - 2 * y) / 2;
+                return y < 0.5 ? Math.cbrt(y / 4) : 1 - Math.cbrt(1 - 2 * y) / 2;
             case "Quart_In":
                 return Math.sqrt(Math.sqrt(y));
             case "Quart_Out":
                 return 1 - Math.sqrt(Math.sqrt(1 - y));
             case "Quart_InOut":
-                return x < 0.5 ? Math.sqrt(Math.sqrt(y / 8)) : 1 - Math.sqrt(Math.sqrt(1 - 2 * y)) / 2;
+                return y < 0.5 ? Math.sqrt(Math.sqrt(y / 8)) : 1 - Math.sqrt(Math.sqrt(1 - 2 * y)) / 2;
             case "Expo_In":
                 return Math.log2(y) / 10 + 1;
             case "Expo_Out":
                 return 0 - Math.log2(1 - y) / 10;
             case "Expo_InOut":
-                return x < 0.5 ? Math.log2(y * 2) / 20 + 1 / 2 : 1 / 2 - Math.log2(2 - 2 * y) / 20;
+                return y < 0.5 ? Math.log2(y * 2) / 20 + 1 / 2 : 1 / 2 - Math.log2(2 - 2 * y) / 20;
             case "Circ_In":
                 return Math.sqrt(2 * y - 2 * y ** 2);
             case "Circ_Out":
                 return 1 + Math.sqrt(1 - y ** 2);
             case "Circ_InOut":
-                return x < 0.5 ? y - y ** 2 : 1 - Math.sqrt(4 * y - 4 * y ** 2) / 2;
+                return y < 0.5 ? y - y ** 2 : 1 - Math.sqrt(4 * y - 4 * y ** 2) / 2;
             default:
-                return x;
+                return y;
         }
     }
     /**
