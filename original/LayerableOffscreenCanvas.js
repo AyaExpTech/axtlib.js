@@ -1,4 +1,4 @@
-export default class LayerableOffscreenCanvas extends OffscreenCanvas {
+globalThis.LayerableOffscreenCanvas = class LayerableOffscreenCanvas extends OffscreenCanvas {
     /**
      * @type {(HTMLImageElement|SVGImageElement|HTMLVideoElement|HTMLCanvasElement|ImageBitmap|OffscreenCanvas|VideoFrame)[]}
      */

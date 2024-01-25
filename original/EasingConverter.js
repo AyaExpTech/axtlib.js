@@ -1,4 +1,4 @@
-export default class EasingConverter {
+globalThis.EasingConverter = class EasingConverter {
     /**
      * 利用できる関数の一覧を取得します。
      * @param {String} filter - フィルター(一致する文字列が含まれる関数のみ取得)
