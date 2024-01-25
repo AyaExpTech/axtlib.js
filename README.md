@@ -11,15 +11,15 @@ module環境に限り、以下のようなコードでインポートできま�
 (バージョン名は適宜変更してください。)
 ```js
 // extends
-import "https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@v0.3.0/extends/CanvasRenderingContext2D.js";
+import "https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@0.6.0/extends/CanvasRenderingContext2D.js";
 // original
-import DatabaseStorage from "https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@v0.3.0/original/DatabaseStorage.js";
+import DatabaseStorage from "https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@0.6.0/original/DatabaseStorage.js";
 ```
 
 axtlib.jsの既存クラス拡張をすべて読み込む場合は、以下のコードを用いることもできます。  
 (バージョン名は適宜変更してください。)
 ```js
-import "https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@v0.3.0/extends/extends/_all.js";
+import "https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@0.6.0/import/all.js";
 ```
 
 ### import()を使う場合
@@ -27,10 +27,8 @@ import "https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@v0.3.0/extends/extends/
 module環境でない場合、Dynamic importを使うことができます。
 
 ```js
-(async () => void await import("./extends/_all.js"))()
+(async () => void await import("[./extends/_all.js](https://cdn.jsdelivr.net/gh/AyaExpTech/axtlib.js@0.6.0/import/all.js)"))()
 ```
-
-> できれば使いやすさの観点から「非module環境でもimportできる仕組み」「originalを含めて一括で読み込む仕組み」を用意したいんですが……
 
 ## License
 
