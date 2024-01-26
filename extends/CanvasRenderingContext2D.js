@@ -82,16 +82,8 @@ CanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, blur = 0,
  *      @param {Object} options - 描画時のオプション
  *      @param {String|CanvasGradient|CanvasPattern} options.fill - 塗りつぶし色(塗りつぶさない場合はnullishを指定)
  *      @param {String|CanvasGradient|CanvasPattern} options.stroke - 輪郭色(塗りつぶさない場合はnullishを指定)
- *      @param {Object} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowFill.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowFill.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowFill.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowFill.color] - 影の色
- *      @param {Object} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowStroke.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowStroke.color] - 影の色
+ *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
  *  
  *  ※以下、`options.stroke`が`"none"`でない場合のみ有効
  *      @param {Number} [options.thickness = 1] - 輪郭の太さ(px)
@@ -102,24 +94,15 @@ CanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, blur = 0,
  *     @param {Number} [options.corner[1] = 0] - 角の半径(px)。矩形の短辺の半分を超える値は無効
  *  
  *  ※以下、`kind`が`"rectangle"`・`"ellipse"`の場合のみ有効
- *      @param {Number} options.width - 図形の描画幅
- *      @param {Number} options.height - 図形の描画高さ
+ *      @param {Number[]} options.size - 図形の描画幅・高さ(px)。[幅, 高さ]の順で指定する
  *  
  *  ※以下、`kind`が`"rectangle"`・`"ellipse"`・`"text"`の場合のみ有効
- *      @param {Number} options.posX - 基準点のX座標
- *      @param {Number} options.posY - 基準点のY座標
+ *      @param {Number[]} options.pos - [基準点のZ座標, 基準点のY座標]
  *      @param {String} [options.align = ""] - 整列方向の一括設定 (許可値 : `""`, `"n"`, `"ne"`, `"e"`, `"se"`, `"s"`, `"sw"`, `"w"`, `"nw"`)
  *  
  *  ※以下、`kind`が`"text"`の場合のみ有効
  *      @param {String} options.text - 描画するテキスト
- *      @param {Object} options.font - 使用するフォント
- *      @param {String} [options.font.style = ""] - フォントのスタイル (許可値 : `""`, `"normal"`, `"italic"`, `"oblique"`)
- *      @param {String} [options.font.caps = ""] - 大文字の代替字形設定 (許可値 : `""`, "`normal`", `"small-caps"`)
- *      @param {String} [options.font.weight = ""] - フォントの太さ (許可値 : `""`, `"normal"`, `"bold"`, `"lighter"`, `"bolder"`, 1以上1000以下の整数)
- *      @param {String} [options.font.stretch = ""] - フォントの伸縮設定 (許可値 : `""`, `"normal"`, "ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded")
- *      @param {String} [options.font.size = "1em"] - フォントの大きさ
- *      @param {String} [options.font.lineHeight = "1"] - 1行の高さ
- *      @param {String} [options.font.family = "sans-serif"] - 使用するフォントの優先順位
+ *      @param {String} options.font - 使用するフォントに関する設定 (CSSの`font`と同じ形式の文字列)
  *      @param {Number?} options.maxWidth - テキストの最大描画幅(px)
  *  
  *  ※以下、`kind`が`"path"`の場合のみ有効
@@ -137,16 +120,16 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         "shadowColor": this.shadowColor
     }
     const changeShadowSetting_fill = () => {
-        this.shadowOffsetX = options?.shadowFill?.x ?? shadowPredecessor.shadowOffsetX;
-        this.shadowOffsetY = options?.shadowFill?.y ?? shadowPredecessor.shadowOffsetY;
-        this.shadowBlur = options?.shadowFill?.blur ?? shadowPredecessor.shadowBlur;
-        this.shadowColor = options?.shadowFill?.color ?? shadowPredecessor.shadowColor;
+        this.shadowOffsetX = options?.shadowFill?.at(0) ?? shadowPredecessor.shadowOffsetX;
+        this.shadowOffsetY = options?.shadowFill?.at(1) ?? shadowPredecessor.shadowOffsetY;
+        this.shadowBlur = options?.shadowFill?.at(2) ?? shadowPredecessor.shadowBlur;
+        this.shadowColor = options?.shadowFill?.at(3) ?? shadowPredecessor.shadowColor;
     };
     const changeShadowSetting_stroke = () => {
-        this.shadowOffsetX = options?.shadowStroke?.x ?? shadowPredecessor.shadowOffsetX;
-        this.shadowOffsetY = options?.shadowStroke?.y ?? shadowPredecessor.shadowOffsetY;
-        this.shadowBlur = options?.shadowStroke?.blur ?? shadowPredecessor.shadowBlur;
-        this.shadowColor = options?.shadowStroke?.color ?? shadowPredecessor.shadowColor;
+        this.shadowOffsetX = options?.shadowStroke?.at(0) ?? shadowPredecessor.shadowOffsetX;
+        this.shadowOffsetY = options?.shadowStroke?.at(1) ?? shadowPredecessor.shadowOffsetY;
+        this.shadowBlur = options?.shadowStroke?.at(2) ?? shadowPredecessor.shadowBlur;
+        this.shadowColor = options?.shadowStroke?.at(3) ?? shadowPredecessor.shadowColor;
     };
     const intlShadowSetting = () => {
         this.shadowOffsetX = shadowPredecessor.shadowOffsetX;
@@ -202,38 +185,38 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
     if (posNeedTypes.includes(kind)) {
         switch (specifiedAlign.vertical) {
             case "top":
-                specifiedPos.top = options.posY;
-                specifiedPos.middle = options.posY + options.height / 2;
-                specifiedPos.bottom = options.posY + options.height;
+                specifiedPos.top = options.pos[1];
+                specifiedPos.middle = options.pos[1] + options.size[1] / 2;
+                specifiedPos.bottom = options.pos[1] + options.size[1];
                 break;
             case "middle":
-                specifiedPos.top = options.posY - options.height / 2;
-                specifiedPos.middle = options.posY;
-                specifiedPos.bottom = options.posY + options.height / 2;
+                specifiedPos.top = options.pos[1] - options.size[1] / 2;
+                specifiedPos.middle = options.pos[1];
+                specifiedPos.bottom = options.pos[1] + options.size[1] / 2;
                 break;
             case "bottom":
-                specifiedPos.top = options.posY - options.height;
-                specifiedPos.middle = options.posY - options.height / 2;
-                specifiedPos.bottom = options.posY;
+                specifiedPos.top = options.pos[1] - options.size[1];
+                specifiedPos.middle = options.pos[1] - options.size[1] / 2;
+                specifiedPos.bottom = options.pos[1];
                 break;
             default:
                 break;
         }
         switch (specifiedAlign.horizontal) {
             case "left":
-                specifiedPos.left = options.posX;
-                specifiedPos.center = options.posX + options.width / 2;
-                specifiedPos.right = options.posX + options.width;
+                specifiedPos.left = options.pos[0];
+                specifiedPos.center = options.pos[0] + options.size[0] / 2;
+                specifiedPos.right = options.pos[0] + options.size[0];
                 break;
             case "center":
-                specifiedPos.left = options.posX - options.width / 2;
-                specifiedPos.center = options.posX;
-                specifiedPos.right = options.posX + options.width / 2;
+                specifiedPos.left = options.pos[0] - options.size[0] / 2;
+                specifiedPos.center = options.pos[0];
+                specifiedPos.right = options.pos[0] + options.size[0] / 2;
                 break;
             case "right":
-                specifiedPos.left = options.posX - options.width;
-                specifiedPos.center = options.posX - options.width / 2;
-                specifiedPos.right = options.posX;
+                specifiedPos.left = options.pos[0] - options.size[0];
+                specifiedPos.center = options.pos[0] - options.size[0] / 2;
+                specifiedPos.right = options.pos[0];
             default:
                 break;
         }
@@ -253,7 +236,7 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [options.fill, options.stroke, options.thickness];
         /* ==== 角丸めを考慮してパス文字列を作成する ==== */
         const rectCornerType = options.corner?.[0] ?? "C";
-        const rectCornerRadius = Math.min(options.corner?.[1] ?? 0, Math.min(options.width, options.height) / 2);
+        const rectCornerRadius = Math.min(options.corner?.[1] ?? 0, Math.min(options.size[0], options.size[1]) / 2);
         let rectPathStr = "";
         {
             /* ①左上の角の左下側からスタート */
@@ -336,8 +319,8 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         /* ==== パスを書く ==== */
         /** @type {Number} - 3次ベジェ曲線による円の描画の制御点の位置(マジックナンバー) */
         const κ_90deg = 4 * (Math.sqrt(2) - 1) / 3;
-        const κ_x = options.width / 2 * κ_90deg;
-        const κ_y = options.height / 2 * κ_90deg;
+        const κ_x = options.size[0] / 2 * κ_90deg;
+        const κ_y = options.size[1] / 2 * κ_90deg;
         /* -- パスを開始する -- */
         this.beginPath();
         this.moveTo(specifiedPos.right, specifiedPos.middle);
@@ -381,12 +364,12 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [options.fill, options.stroke, options.thickness];
         [this.textAlign, this.textBaseline] = [specifiedAlign.horizontal, specifiedAlign.vertical];
         /* ==== fontプロパティの文字列をoptions.fontから作成して設定する ==== */
-        this.font = `${[options?.font?.style, options?.font?.caps, options?.font?.weight, options?.font?.stretch].filter(v => v && v != "normal").join(" ")} ${options?.font?.size ?? "1rem"}/${options?.font?.lineHeight ?? "1"} ${options?.font?.family ?? "sans-serif"}`.trim();
+        this.font = options?.font ?? "10px sans-serif";
         /* ==== テキストを描画する ==== */
         changeShadowSetting_fill();
-        options.fill == null ? void 0 : this.fillText(options.text, options.posX, options.posY, options.maxWidth || undefined);
+        options.fill == null ? void 0 : this.fillText(options.text, options.pos[0], options.pos[1], options.maxWidth || undefined);
         changeShadowSetting_stroke();
-        options.stroke == null ? void 0 : this.strokeText(options.text, options.posX, options.posY, options.maxWidth || undefined);
+        options.stroke == null ? void 0 : this.strokeText(options.text, options.pos[0], options.pos[1], options.maxWidth || undefined);
         intlShadowSetting();
         /* ==== メモしてあった各プロパティをもとに戻す ==== */
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [predecessor.fillStyle, predecessor.strokeStyle, predecessor.lineWidth];
