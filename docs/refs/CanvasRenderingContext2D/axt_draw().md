@@ -28,38 +28,18 @@
 ## 影の描画設定
 
 どの図形を描画するかに関わらず、`options.shadowFill`, `options.shadowStroke`を指定することで影の描画設定を変更することができます。  
+`axt_draw()`は、`options.shadowFill`, `options.shadowStroke`のプロパティにnullishでない値が指定されている場合に、一時的に描画する図形の影の描画に関する設定を変更します。  
+`options.shadowFill`, `options.shadowStroke`は配列で、先頭の要素から順に、`ctx.shadowOffsetX`, `ctx.shadowOffsetY`, `ctx.shadowBlur`, `ctx.shadowColor`に対応します。  
 以下は、有効な`options.shadowFill`, `options,shadowStroke`の例です。
 ```js
-{
-    "x": 0,
-    "y": 2,
-    "blur": 4,
-    "color": "black",
-}
+[0, 2, 4, "black"]
 ```
-
-`axt_draw()`は、`options.shadowFill`, `options.shadowStroke`のプロパティにnullishでない値が指定されている場合に、一時的に描画する図形の影の描画に関する設定を変更します。
-
-| `options.shadowFill`, `options.shadowStroke`のプロパティ名 | コンテキストの対応するプロパティ |
-|:----:|:----:|
-| `x` | `ctx.shadowOffsetX` |
-| `y` | `ctx.shadowOffsetY` |
-| `blur` | `ctx.shadowBlur` |
-| `color` | `ctx.shadowColor` |
 
 ```js
 /**
  * 【影の描画設定に関連する引数】
- *      @param {Object} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowFill.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowFill.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowFill.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowFill.color] - 影の色
- *      @param {Object} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowStroke.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowStroke.color] - 影の色
+ *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
  */
 ```
 
@@ -70,24 +50,18 @@
 ```js
 /**
  * 【長方形(矩形)の描画で有効な引数】
- *      @param {"rectangle"} kind - 描画する図形の種類
+ *      @param {String} kind - 描画する図形の種類 (許可値 : `"rectangle"`(矩形), `"ellipse"`(楕円), `"text"`(テキスト), `"path"`(パス))
  *      @param {Object} options - 描画時のオプション
  *      @param {String|CanvasGradient|CanvasPattern} options.fill - 塗りつぶし色(塗りつぶさない場合はnullishを指定)
  *      @param {String|CanvasGradient|CanvasPattern} options.stroke - 輪郭色(塗りつぶさない場合はnullishを指定)
- *      @param {Object} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowFill.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowFill.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowFill.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowFill.color] - 影の色
- *      @param {Object} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowStroke.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowStroke.color] - 影の色
- *      @param {Number} options.width - 図形の描画幅
- *      @param {Number} options.height - 図形の描画高さ
- *      @param {Number} options.posX - 基準点のX座標
- *      @param {Number} options.posY - 基準点のY座標
+ *      @param {Object} [options.shadow] - 影の描画に関する設定
+ *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {Array} options.corner - 角をどのように描画するか
+ *      @param {"C"|"R"} [options.corner[0] = "C"] - 角の描画タイプ。Cで角落とし、Rで角丸
+ *      @param {Number} [options.corner[1] = 0] - 角の半径(px)。矩形の短辺の半分を超える値は無効
+ *      @param {Number[]} options.size - 図形の描画幅・高さ(px)。[幅, 高さ]の順で指定する
+ *      @param {Number[]} options.pos - [基準点のZ座標, 基準点のY座標]
  *      @param {String} [options.align = ""] - 整列方向の一括設定 (許可値 : `""`, `"n"`, `"ne"`, `"e"`, `"se"`, `"s"`, `"sw"`, `"w"`, `"nw"`)
  *  ※以下、`options.stroke`が`"none"`でない場合のみ有効
  *      @param {Number} [options.thickness = 1] - 輪郭の太さ(px)
@@ -99,26 +73,16 @@
 ```js
 canvas.ctx.axt_draw("rectangle", {
     "fill": "black",
-    "stroke": null,
-    "width": 1000,
-    "height": 1000,
-    "posX": 500,
-    "posY": 1000,
+    "size": [1000, 1000],
+    "pos": [500, 1000],
     "align": "s"
 });
 canvas.ctx.axt_draw("rectangle", {
     "fill": "#c77",
     "stroke": "#f99",
-    "shadowFill": {
-        "x": 0,
-        "y": 0,
-        "blur": 16,
-        "color": "#eee"
-    },
-    "width": 800,
-    "height": 400,
-    "posX": 100,
-    "posY": 100,
+    "shadowFill": [0, 0, 16, "#eee"],
+    "size": [800, 400],
+    "pos": [100, 100],
     "align": "nw",
     "thickness": 4
 });
@@ -133,24 +97,15 @@ canvas.ctx.axt_draw("rectangle", {
 ```js
 /**
  * 【楕円の描画で有効な引数】
- *      @param {"ellipse"} kind - 描画する図形の種類
+ *      @param {String} kind - 描画する図形の種類 (許可値 : `"rectangle"`(矩形), `"ellipse"`(楕円), `"text"`(テキスト), `"path"`(パス))
  *      @param {Object} options - 描画時のオプション
  *      @param {String|CanvasGradient|CanvasPattern} options.fill - 塗りつぶし色(塗りつぶさない場合はnullishを指定)
  *      @param {String|CanvasGradient|CanvasPattern} options.stroke - 輪郭色(塗りつぶさない場合はnullishを指定)
- *      @param {Object} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowFill.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowFill.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowFill.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowFill.color] - 影の色
- *      @param {Object} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowStroke.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowStroke.color] - 影の色
- *      @param {Number} options.width - 図形の描画幅
- *      @param {Number} options.height - 図形の描画高さ
- *      @param {Number} options.posX - 基準点のX座標
- *      @param {Number} options.posY - 基準点のY座標
+ *      @param {Object} [options.shadow] - 影の描画に関する設定
+ *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {Number[]} options.size - 図形の描画幅・高さ(px)。[幅, 高さ]の順で指定する
+ *      @param {Number[]} options.pos - [基準点のZ座標, 基準点のY座標]
  *      @param {String} [options.align = ""] - 整列方向の一括設定 (許可値 : `""`, `"n"`, `"ne"`, `"e"`, `"se"`, `"s"`, `"sw"`, `"w"`, `"nw"`)
  *  ※以下、`options.stroke`が`"none"`でない場合のみ有効
  *      @param {Number} [options.thickness = 1] - 輪郭の太さ(px)
@@ -162,36 +117,24 @@ canvas.ctx.axt_draw("rectangle", {
 ```js
 canvas.ctx.axt_draw("rectangle", {
     "fill": "black",
-    "stroke": null,
-    "width": 1000,
-    "height": 1000,
-    "posX": 500,
-    "posY": 1000,
+    "size": [1000, 1000],
+    "pos": [500, 1000],
     "align": "s"
 });
 canvas.ctx.axt_draw("ellipse", {
     "fill": "#c77",
     "stroke": "#f99",
-    "shadowFill": {
-        "x": 0,
-        "y": 0,
-        "blur": 16,
-        "color": "#eee"
-    },
-    "width": 1000,
-    "height": 1000,
-    "posX": 500,
-    "posY": 500,
+    "shadowFill": [0, 0, 16, "#eee"],
+    "size": [1000, 1000],
+    "pos": [500, 500],
     "align": "",
     "thickness": 4
 });
 canvas.ctx.axt_draw("ellipse", {
     "fill": "#7c7",
     "stroke": null,
-    "width": 800,
-    "height": 400,
-    "posX": 900,
-    "posY": 700,
+    "size": [800, 400],
+    "pos": [900, 700],
     "align": "se",
     "thickness": 4
 });
@@ -206,32 +149,17 @@ canvas.ctx.axt_draw("ellipse", {
 ```js
 /**
  * 【テキストの描画で有効な引数】
- *      @param {"text"} kind - 描画する図形の種類
+ *      @param {String} kind - 描画する図形の種類 (許可値 : `"rectangle"`(矩形), `"ellipse"`(楕円), `"text"`(テキスト), `"path"`(パス))
  *      @param {Object} options - 描画時のオプション
  *      @param {String|CanvasGradient|CanvasPattern} options.fill - 塗りつぶし色(塗りつぶさない場合はnullishを指定)
  *      @param {String|CanvasGradient|CanvasPattern} options.stroke - 輪郭色(塗りつぶさない場合はnullishを指定)
- *      @param {Object} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowFill.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowFill.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowFill.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowFill.color] - 影の色
- *      @param {Object} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowStroke.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowStroke.color] - 影の色
- *      @param {Number} options.posX - 基準点のX座標
- *      @param {Number} options.posY - 基準点のY座標
+ *      @param {Object} [options.shadow] - 影の描画に関する設定
+ *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {Number[]} options.pos - [基準点のZ座標, 基準点のY座標]
  *      @param {String} [options.align = ""] - 整列方向の一括設定 (許可値 : `""`, `"n"`, `"ne"`, `"e"`, `"se"`, `"s"`, `"sw"`, `"w"`, `"nw"`)
  *      @param {String} options.text - 描画するテキスト
- *      @param {Object} options.font - 使用するフォント
- *      @param {String} [options.font.style = ""] - フォントのスタイル (許可値 : `""`, `"normal"`, `"italic"`, `"oblique"`)
- *      @param {String} [options.font.caps = ""] - 大文字の代替字形設定 (許可値 : `""`, "`normal`", `"small-caps"`)
- *      @param {String} [options.font.weight = ""] - フォントの太さ (許可値 : `""`, `"normal"`, `"bold"`, `"lighter"`, `"bolder"`, 1以上1000以下の整数)
- *      @param {String} [options.font.stretch = ""] - フォントの伸縮設定 (許可値 : `""`, `"normal"`, "ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded")
- *      @param {String} [options.font.size = "1em"] - フォントの大きさ
- *      @param {String} [options.font.lineHeight = "1"] - 1行の高さ
- *      @param {String} [options.font.family = "sans-serif"] - 使用するフォントの優先順位
+ *      @param {String} options.font - 使用するフォントに関する設定 (CSSの`font`と同じ形式の文字列)
  *      @param {Number?} options.maxWidth - テキストの最大描画幅(px)
  *  ※以下、`options.stroke`が`"none"`でない場合のみ有効
  *      @param {Number} [options.thickness = 1] - 輪郭の太さ(px)
@@ -243,51 +171,30 @@ canvas.ctx.axt_draw("ellipse", {
 ```js
 canvas.ctx.axt_draw("rectangle", {
     "fill": "black",
-    "stroke": null,
-    "width": 1000,
-    "height": 1000,
-    "posX": 500,
-    "posY": 1000,
+    "size": [1000, 1000],
+    "pos": [500, 1000],
     "align": "s"
 });
 canvas.ctx.axt_draw("ellipse", {
     "fill": "#6d6",
-    "width": 10,
-    "height": 10,
-    "posX": 500,
-    "posY": 500,
+    "size": [10, 10],
+    "pos": [500, 500],
     "align": ""
 });
 canvas.ctx.axt_draw("text", {
     "fill": "white",
-    "stroke": "null",
-    "posX": 500,
-    "posY": 500,
+    "pos": [500, 500],
     "align": "e",
     "text": "Hello, World!"
 });
 canvas.ctx.axt_draw("text", {
     "fill": "white",
     "stroke": "red",
-    "shadowFill": {
-        "x": 0,
-        "y": 0,
-        "blur": 16,
-        "color": "#fff"
-    },
-    "posX": 500,
-    "posY": 500,
+    "shadowFill": [0, 0, 16, "#eee"],
+    "pos": [500, 500],
     "align": "w",
     "text": "長い文章でもmaxWidthを指定することで指定した幅に収めることができます",
-    "font": {
-        "style": "italic",
-        "caps": "small-caps",
-        "weight": "bold",
-        "stretch": "normal",
-        "size": "2rem",
-        "lineHeight": "2",
-        "family": "monospace"
-    },
+    "font": "italic small-caps bold 2rem/2 monospace",
     "maxWidth": 500,
     "thickness": 2
 });
@@ -302,20 +209,13 @@ SVGパスを描画する場合、`options`の以下のプロパティの指定�
 ```js
 /**
  * 【SVGパスの描画で有効な引数】
- *      @param {"path"} kind - 描画する図形の種類
+ *      @param {String} kind - 描画する図形の種類 (許可値 : `"rectangle"`(矩形), `"ellipse"`(楕円), `"text"`(テキスト), `"path"`(パス))
  *      @param {Object} options - 描画時のオプション
  *      @param {String|CanvasGradient|CanvasPattern} options.fill - 塗りつぶし色(塗りつぶさない場合はnullishを指定)
  *      @param {String|CanvasGradient|CanvasPattern} options.stroke - 輪郭色(塗りつぶさない場合はnullishを指定)
- *      @param {Object} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowFill.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowFill.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowFill.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowFill.color] - 影の色
- *      @param {Object} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowStroke.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowStroke.color] - 影の色
+ *      @param {Object} [options.shadow] - 影の描画に関する設定
+ *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
  *      @param {String} options.d - 描かれるパスを、[SVGのd属性](https://developer.mozilla.org/ja/docs/Web/SVG/Attribute/d)と同様の形式で記述する。絶対座標の原点はoptions.posXとoptions.posYに依存
  *      @param {"nonzero"|"evenodd"} [options.fillRule = "nonzero"] - 塗りつぶしルール
  *  ※以下、`options.stroke`が`"none"`でない場合のみ有効
@@ -328,41 +228,24 @@ SVGパスを描画する場合、`options`の以下のプロパティの指定�
 ```js
 canvas.ctx.axt_draw("rectangle", {
     "fill": "black",
-    "width": 1000,
-    "height": 1000,
-    "posX": 500,
-    "posY": 1000,
+    "size": [1000, 1000],
+    "pos": [500, 1000],
     "align": "s"
 });
 canvas.ctx.axt_draw("path", {
     "fill": "green",
-    "shadowFill": {
-        "x": 0,
-        "y": 0,
-        "blur": 8,
-        "color": "#fff"
-    },
+    "shadowFill": [0, 0, 8, "#fff"],
     "d": "M 50,0 L 21,90 L 98,35 L 2,35 L 79,90 Z"
 });
 canvas.ctx.axt_draw("path", {
     "fill": "green",
-    "shadowFill": {
-        "x": 0,
-        "y": 0,
-        "blur": 8,
-        "color": "#fff"
-    },
+    "shadowFill": [0, 0, 8, "#fff"],
     "d": "M 150,0 L 121,90 L 198,35 L 102,35 L 179,90 Z",
     "fillRule": "evenodd"
 });
 canvas.ctx.axt_draw("path", {
     "stroke": "red",
-    "shadowStroke": {
-        "x": 0,
-        "y": 0,
-        "blur": 8,
-        "color": "#fff"
-    },
+    "shadowStroke": [0, 0, 8, "#fff"],
     "d": "M 100,900 C 300,900 250,100 500,100 S 700,900 900,900",
     "thickness": 4
 });
@@ -381,39 +264,27 @@ canvas.ctx.axt_draw("path", {
  *      @param {Object} options - 描画時のオプション
  *      @param {String|CanvasGradient|CanvasPattern} options.fill - 塗りつぶし色(塗りつぶさない場合はnullishを指定)
  *      @param {String|CanvasGradient|CanvasPattern} options.stroke - 輪郭色(塗りつぶさない場合はnullishを指定)
- *      @param {Object} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowFill.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowFill.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowFill.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowFill.color] - 影の色
- *      @param {Object} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定
- *      @param {Number} [options.shadowStroke.x] - 影の右方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.y] - 影の下方向ずらし量(px)
- *      @param {Number} [options.shadowStroke.blur] - 影のぼかし量(px)
- *      @param {String} [options.shadowStroke.color] - 影の色
+ *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
  *  
  *  ※以下、`options.stroke`が`"none"`でない場合のみ有効
  *      @param {Number} [options.thickness = 1] - 輪郭の太さ(px)
  *  
+ *  ※以下、`kind`が`"rectangle"`の場合のみ有効
+ *     @param {Array} options.corner - 角をどのように描画するか
+ *     @param {"C"|"R"} [options.corner[0] = "C"] - 角の描画タイプ。Cで角落とし、Rで角丸
+ *     @param {Number} [options.corner[1] = 0] - 角の半径(px)。矩形の短辺の半分を超える値は無効
+ *  
  *  ※以下、`kind`が`"rectangle"`・`"ellipse"`の場合のみ有効
- *      @param {Number} options.width - 図形の描画幅
- *      @param {Number} options.height - 図形の描画高さ
+ *      @param {Number[]} options.size - 図形の描画幅・高さ(px)。[幅, 高さ]の順で指定する
  *  
  *  ※以下、`kind`が`"rectangle"`・`"ellipse"`・`"text"`の場合のみ有効
- *      @param {Number} options.posX - 基準点のX座標
- *      @param {Number} options.posY - 基準点のY座標
+ *      @param {Number[]} options.pos - [基準点のZ座標, 基準点のY座標]
  *      @param {String} [options.align = ""] - 整列方向の一括設定 (許可値 : `""`, `"n"`, `"ne"`, `"e"`, `"se"`, `"s"`, `"sw"`, `"w"`, `"nw"`)
  *  
  *  ※以下、`kind`が`"text"`の場合のみ有効
  *      @param {String} options.text - 描画するテキスト
- *      @param {Object} options.font - 使用するフォント
- *      @param {String} [options.font.style = ""] - フォントのスタイル (許可値 : `""`, `"normal"`, `"italic"`, `"oblique"`)
- *      @param {String} [options.font.caps = ""] - 大文字の代替字形設定 (許可値 : `""`, "`normal`", `"small-caps"`)
- *      @param {String} [options.font.weight = ""] - フォントの太さ (許可値 : `""`, `"normal"`, `"bold"`, `"lighter"`, `"bolder"`, 1以上1000以下の整数)
- *      @param {String} [options.font.stretch = ""] - フォントの伸縮設定 (許可値 : `""`, `"normal"`, "ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded")
- *      @param {String} [options.font.size = "1em"] - フォントの大きさ
- *      @param {String} [options.font.lineHeight = "1"] - 1行の高さ
- *      @param {String} [options.font.family = "sans-serif"] - 使用するフォントの優先順位
+ *      @param {String} options.font - 使用するフォントに関する設定 (CSSの`font`と同じ形式の文字列)
  *      @param {Number?} options.maxWidth - テキストの最大描画幅(px)
  *  
  *  ※以下、`kind`が`"path"`の場合のみ有効
