@@ -96,6 +96,11 @@ CanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, blur = 0,
  *  ※以下、`options.stroke`が`"none"`でない場合のみ有効
  *      @param {Number} [options.thickness = 1] - 輪郭の太さ(px)
  *  
+ *  ※以下、`kind`が`"rectangle"`の場合のみ有効
+ *     @param {Array} options.corner - 角をどのように描画するか
+ *     @param {"C"|"R"} [options.corner[0] = "C"] - 角の描画タイプ。Cで角落とし、Rで角丸
+ *     @param {Number} [options.corner[1] = 0] - 角の半径(px)。矩形の短辺の半分を超える値は無効
+ *  
  *  ※以下、`kind`が`"rectangle"`・`"ellipse"`の場合のみ有効
  *      @param {Number} options.width - 図形の描画幅
  *      @param {Number} options.height - 図形の描画高さ
@@ -246,13 +251,69 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         };
         /* ==== 関係する描画設定プロパティを指定通りに変更する ==== */
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [options.fill, options.stroke, options.thickness];
+        /* ==== 角丸めを考慮してパス文字列を作成する ==== */
+        const rectCornerType = options.corner?.[0] ?? "C";
+        const rectCornerRadius = Math.min(options.corner?.[1] ?? 0, Math.min(options.width, options.height) / 2);
+        let rectPathStr = "";
+        {
+            /* ①左上の角の左下側からスタート */
+            rectPathStr += `M ${specifiedPos.left} ${specifiedPos.top + rectCornerRadius} `;
+            /* ②左上の角の右上側へ */
+            switch (rectCornerType) {
+                case "R": // 角丸め
+                    rectPathStr += `A ${rectCornerRadius} ${rectCornerRadius} 0 0 1 ${specifiedPos.left + rectCornerRadius} ${specifiedPos.top} `; // 左上の角
+                    break;
+                default: // 角落とし
+                    rectPathStr += `L ${specifiedPos.left + rectCornerRadius} ${specifiedPos.top} `; // 左上の角
+                    break;
+            }
+            /* ③右上の角の左上側へ */
+            rectPathStr += `L ${specifiedPos.right - rectCornerRadius} ${specifiedPos.top} `;
+            /* ④右上の角の右下側へ */
+            switch (rectCornerType) {
+                case "R": // 角丸め
+                    rectPathStr += `A ${rectCornerRadius} ${rectCornerRadius} 0 0 1 ${specifiedPos.right} ${specifiedPos.top + rectCornerRadius} `; // 右上の角
+                    break;
+                default: // 角落とし
+                    rectPathStr += `L ${specifiedPos.right} ${specifiedPos.top + rectCornerRadius} `; // 右上の角
+                    break;
+            }
+            /* ⑤右下の角の右上側へ */
+            rectPathStr += `L ${specifiedPos.right} ${specifiedPos.bottom - rectCornerRadius} `;
+            /* ⑥右下の角の左下側へ */
+            switch (rectCornerType) {
+                case "R": // 角丸め
+                    rectPathStr += `A ${rectCornerRadius} ${rectCornerRadius} 0 0 1 ${specifiedPos.right - rectCornerRadius} ${specifiedPos.bottom} `; // 右下の角
+                    break;
+                default: // 角落とし
+                    rectPathStr += `L ${specifiedPos.right - rectCornerRadius} ${specifiedPos.bottom} `; // 右下の角
+                    break;
+            }
+            /* ⑦左下の角の右下側へ */
+            rectPathStr += `L ${specifiedPos.left + rectCornerRadius} ${specifiedPos.bottom} `;
+            /* ⑧左下の角の左上側へ */
+            switch (rectCornerType) {
+                case "R": // 角丸め
+                    rectPathStr += `A ${rectCornerRadius} ${rectCornerRadius} 0 0 1 ${specifiedPos.left} ${specifiedPos.bottom - rectCornerRadius} `; // 左下の角
+                    break;
+                default: // 角落とし
+                    rectPathStr += `L ${specifiedPos.left} ${specifiedPos.bottom - rectCornerRadius} `; // 左下の角
+                    break;
+            }
+            /* ⑨左上の角の左下側へ */
+            rectPathStr += `L ${specifiedPos.left} ${specifiedPos.top + rectCornerRadius} `;
+            /* ⑩パスを閉じる */
+            rectPathStr += `Z`;
+        }
+        /* ==== パスObjectを作成する ==== */
+        const rectPath = new Path2D(rectPathStr);
         /* ==== 矩形を描画する ==== */
         changeShadowSetting_fill();
         options.fill == null ? void 0
-            : this.fillRect(specifiedPos.left, specifiedPos.top, options.width, options.height);
+            : this.fill(rectPath);
         changeShadowSetting_stroke();
         options.stroke == null ? void 0
-            : this.strokeRect(specifiedPos.left, specifiedPos.top, options.width, options.height);
+            : this.stroke(rectPath);
         intlShadowSetting();
         /* ==== メモしてあったfillStyle・strokeStyle・lineWidthをもとに戻す ==== */
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [predecessor.fillStyle, predecessor.strokeStyle, predecessor.lineWidth];
