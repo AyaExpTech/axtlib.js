@@ -202,7 +202,7 @@ globalThis.EasingConverter = class EasingConverter {
             case "Quart_InOut":
                 return [0.76, 0, 0.24, 1];
             case "Expo_In":
-                return [0.76, 0, 0.24, 1];
+                return [0.7, 0, 0.84, 0];
             case "Expo_Out":
                 return [0.16, 1, 0.3, 1];
             case "Expo_InOut":
