@@ -10,23 +10,15 @@
         window.addEventListener("load", event => {
             const canvas = document.querySelector("div.sandbox>canvas");
             // test start
-            canvas.ctx.axt_draw("rectangle", {
-                "stroke": "#88f",
-                "corner": ["R", 100],
-                "size": [500, 500],
-                "pos": [500, 500],
-                "align": "",
-                "thickness": 5,
-            });
-            canvas.ctx.axt_draw("rectangle", {
-                "fill": "#88f",
-                "corner": ["C", 100],
+            const image = new Image();
+            image.src = "/test/CanvasRenderingContext2D/test.png";
+            console.log(image);
+            canvas.ctx.axt_draw("image", {
                 "size": [400, 400],
                 "pos": [500, 500],
-                "align": "",
-                "thickness": 5,
+                "align": "nw",
+                "image": image
             });
-
             // test end
 
         })
@@ -42,6 +34,7 @@
         <canvas height="1000" width="1000"
             style="background-color: #000;margin:0 auto;display:block;max-width:calc(100vw-4rem);max-height:calc(100vh-10rem);aspect-ratio:1;"></canvas>
     </div>
+    <img src="/test/CanvasRenderingContext2D/test.png" alt="" style="width:0;height:0;opacity:0;">
 </body>
 
 </html>
