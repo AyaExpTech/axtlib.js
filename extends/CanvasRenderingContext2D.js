@@ -17,13 +17,8 @@ CanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, blur = 0,
 /**
  * 汎用描画メソッド : 指定した図形を描画します。
  *  【引数の一覧】
- *  ※以下、すべての場合で有効
- *      @param {String} kind - 描画する図形の種類 (許可値 : `"rectangle"`(矩形), `"ellipse"`(楕円), `"text"`(テキスト), `"path"`(パス))
- *      @param {Object} options - 描画時のオプション
- *      @param {String|CanvasGradient|CanvasPattern} options.fill - 塗りつぶし色(塗りつぶさない場合はnullishを指定)
- *      @param {String|CanvasGradient|CanvasPattern} options.stroke - 輪郭色(塗りつぶさない場合はnullishを指定)
- *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
- *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *  @param {String} kind - 描画する図形の種類 (許可値 : `"rectangle"`(矩形), `"ellipse"`(楕円), `"text"`(テキスト), `"path"`(パス), `"image"`(画像))
+ *  @param {Object} options - 描画時のオプション
  *  
  *  ※以下、`options.stroke`が`"none"`でない場合のみ有効
  *      @param {Number} [options.thickness = 1] - 輪郭の太さ(px)
@@ -33,12 +28,18 @@ CanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, blur = 0,
  *     @param {"C"|"R"} [options.corner[0] = "C"] - 角の描画タイプ。Cで角落とし、Rで角丸
  *     @param {Number} [options.corner[1] = 0] - 角の半径(px)。矩形の短辺の半分を超える値は無効
  *  
- *  ※以下、`kind`が`"rectangle"`・`"ellipse"`の場合のみ有効
- *      @param {Number[]} options.size - 図形の描画幅・高さ(px)。[幅, 高さ]の順で指定する
+ *  ※以下、`kind`が`"rectangle"`・`"ellipse"`・`"image"`の場合のみ有効
+ *      @param {Number[]} options.size - 図形の描画幅・高さ(px)。[幅, 高さ]の順で指定する。(imageに限り、指定がない場合は自動設定)
  *  
- *  ※以下、`kind`が`"rectangle"`・`"ellipse"`・`"text"`の場合のみ有効
- *      @param {Number[]} options.pos - [基準点のZ座標, 基準点のY座標]
+ *  ※以下、`kind`が`"rectangle"`・`"ellipse"`・`"text"`・`"image"`の場合のみ有効
+ *      @param {Number[]} options.pos - [基準点のX座標, 基準点のY座標]
  *      @param {String} [options.align = ""] - 整列方向の一括設定 (許可値 : `""`, `"n"`, `"ne"`, `"e"`, `"se"`, `"s"`, `"sw"`, `"w"`, `"nw"`)
+ *  
+ *  ※以下、`kind`が`"rectangle"`・`"ellipse"`・`"text"`・`"path"`の場合のみ有効
+ *      @param {String|CanvasGradient|CanvasPattern} options.fill - 塗りつぶし色(塗りつぶさない場合はnullishを指定)
+ *      @param {String|CanvasGradient|CanvasPattern} options.stroke - 輪郭色(塗りつぶさない場合はnullishを指定)
+ *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
  *  
  *  ※以下、`kind`が`"text"`の場合のみ有効
  *      @param {String} options.text - 描画するテキスト
@@ -48,6 +49,9 @@ CanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, blur = 0,
  *  ※以下、`kind`が`"path"`の場合のみ有効
  *      @param {String} options.d - 描かれるパスを、[SVGのd属性](https://developer.mozilla.org/ja/docs/Web/SVG/Attribute/d)と同様の形式で記述する。絶対座標の原点はoptions.posXとoptions.posYに依存
  *      @param {"nonzero"|"evenodd"} [options.fillRule = "nonzero"] - 塗りつぶしルール
+ *  
+ *  ※以下、`kind`が`"image"`の場合のみ有効
+ *      @param {HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas} options.image - 描画する画像リソース
  */
 CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
     /** ================================================================
@@ -120,8 +124,12 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
     /** @type {String[]} - 左中右のX座標・上中下のY座標が必要なkindの一覧 */
     const posNeedTypes = [
         "rectangle",
-        "ellipse"
+        "ellipse",
+        "image"
     ];
+    if (kind == "image") {
+        options.size = options.size ?? [options.image.width, options.image.height];
+    }
     if (posNeedTypes.includes(kind)) {
         switch (specifiedAlign.vertical) {
             case "top":
@@ -341,6 +349,18 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         intlShadowSetting();
         /* ==== メモしてあったfillStyle・strokeStyle・lineWidthをもとに戻す ==== */
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [predecessor.fillStyle, predecessor.strokeStyle, predecessor.lineWidth];
+        return;
+    }
+    /** ================================================================
+     * 画像 ("image")
+    ================================================================= */
+    if (kind === "image") {
+        /* ==== 画像の幅と高さ ==== */
+        const imgWidth = options.size[0] ?? options.image.width;
+        const imgHeight = options.size[1] ?? options.image.height;
+        /* ==== 描画する ==== */
+        // drawImage(image, dx, dy, dWidth, dHeight)
+        this.drawImage(options.image, specifiedPos.left, specifiedPos.top, imgWidth, imgHeight);
         return;
     }
 };
