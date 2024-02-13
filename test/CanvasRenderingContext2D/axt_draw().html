@@ -13,11 +13,25 @@
             const image = new Image();
             image.src = "/test/CanvasRenderingContext2D/test.png";
             console.log(image);
-            canvas.ctx.axt_draw("image", {
+            /*canvas.ctx.axt_draw("image", {
                 "size": [400, 400],
                 "pos": [500, 500],
                 "align": "nw",
                 "image": image
+            });*/
+            canvas.ctx.axt_draw("rectangle", {
+                "fill": ["s", [0, "#00f"], [1, "#0f0"]],
+                "size": [500, 500],
+                "pos": [300, 300],
+                "align": ""
+            });
+            canvas.ctx.axt_draw("ellipse", {
+                "fill": ["se", [0, "#f000"], [1, "#f00f"]],
+                "stroke": ["se", [0, "#0f0f"], [1, "#0f00"]],
+                "size": [500, 500],
+                "pos": [700, 700],
+                "align": "",
+                "thickness": 3
             });
             // test end
 
