@@ -37,13 +37,16 @@ CanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, blur = 0,
  *  
  *  ※以下、`kind`が`"rectangle"`・`"ellipse"`・`"text"`・`"path"`の場合のみ有効
  *      @param {String|CanvasGradient|CanvasPattern|Array} options.fill - 塗りつぶし色(塗りつぶさない場合はnull) 
- *          ※rectangle・ellipseはグラデーション記法(Array)使用可能。
+ *          ※rectangle・ellipse・pathはグラデーション記法(Array)使用可能。
  *          「[方向(neswを使って指定), [色の位置(0~1), 色], [色の位置(0~1), 色], ……]」で指定する
  *      @param {String|CanvasGradient|CanvasPattern|Array} options.stroke - 塗りつぶし色(塗りつぶさない場合はnull) 
- *          ※rectangle・ellipseはグラデーション記法(Array)使用可能。
+ *          ※rectangle・ellipse・pathはグラデーション記法(Array)使用可能。
  *          「[方向(neswを使って指定), [色の位置(0~1), 色], [色の位置(0~1), 色], ……]」で指定する
  *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
  *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
+ *  
+ *  ※以下、`kind`が`"rectangle"`・`"ellipse"`・`"path"`の場合のみ有効
+ *      @param {Number[]} [options.range = [0, this.canvas.height, 0, this.canvas.width]] - グラデーションの範囲。[上端, 下端, 左端, 右端]の順で指定する。pathでグラデを描く場合指定推奨
  *  
  *  ※以下、`kind`が`"text"`の場合のみ有効
  *      @param {String} options.text - 描画するテキスト
@@ -125,6 +128,16 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         /** @type {Number} - 右 X座標 */
         "right": NaN
     }
+    // 別途プロパティで指定されている場合はそれを使う
+    {
+        specifiedPos.top = options?.range?.at(0) ?? 0;
+        specifiedPos.bottom = options?.range?.at(1) ?? this.canvas.height;
+        specifiedPos.left = options?.range?.at(2) ?? 0;
+        specifiedPos.right = options?.range?.at(3) ?? this.canvas.width;
+        specifiedPos.middle = (specifiedPos.top + specifiedPos.bottom) / 2;
+        specifiedPos.center = (specifiedPos.left + specifiedPos.right) / 2;
+        console.log(specifiedPos);
+    }
     /** @type {String[]} - 左中右のX座標・上中下のY座標が必要なkindの一覧 */
     const posNeedTypes = [
         "rectangle",
@@ -178,7 +191,7 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
      * options.fill・options.strokeを解析して、線形グラデーション記法ならばCanvasGradientオブジェクトに変換する
     ================================================================= */
     /* options.fill */
-    if (posNeedTypes.includes(kind)) {
+    if (posNeedTypes.includes(kind) || kind === "path") {
         /* プロパティを可能ならJSON文字列として解析する */
         const parsed = (x => { try { return JSON.parse(x) } catch (err) { return x } })(options.fill);
         /* グラデーション記法(Array)の場合 */
@@ -219,7 +232,7 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         }
     }
     /* options.stroke */
-    if (posNeedTypes.includes(kind)) {
+    if (posNeedTypes.includes(kind) || kind === "path") {
         /* プロパティを可能ならJSON文字列として解析する */
         const parsed = (x => { try { return JSON.parse(x) } catch (err) { return x } })(options.stroke);
         /* グラデーション記法(Array)の場合 */
@@ -441,6 +454,7 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [predecessor.fillStyle, predecessor.strokeStyle, predecessor.lineWidth];
         return;
     }
+
     /** ================================================================
      * 画像 ("image")
     ================================================================= */
@@ -454,3 +468,4 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         return;
     }
 };
+
