@@ -36,8 +36,12 @@ OffscreenCanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, 
  *      @param {String} [options.align = ""] - 整列方向の一括設定 (許可値 : `""`, `"n"`, `"ne"`, `"e"`, `"se"`, `"s"`, `"sw"`, `"w"`, `"nw"`)
  *  
  *  ※以下、`kind`が`"rectangle"`・`"ellipse"`・`"text"`・`"path"`の場合のみ有効
- *      @param {String|CanvasGradient|CanvasPattern} options.fill - 塗りつぶし色(塗りつぶさない場合はnullishを指定)
- *      @param {String|CanvasGradient|CanvasPattern} options.stroke - 輪郭色(塗りつぶさない場合はnullishを指定)
+ *      @param {String|CanvasGradient|CanvasPattern|Array} options.fill - 塗りつぶし色(塗りつぶさない場合はnull) 
+ *          ※rectangle・ellipseはグラデーション記法(Array)使用可能。
+ *          「[方向(neswを使って指定), [色の位置(0~1), 色], [色の位置(0~1), 色], ……]」で指定する
+ *      @param {String|CanvasGradient|CanvasPattern|Array} options.stroke - 塗りつぶし色(塗りつぶさない場合はnull) 
+ *          ※rectangle・ellipseはグラデーション記法(Array)使用可能。
+ *          「[方向(neswを使って指定), [色の位置(0~1), 色], [色の位置(0~1), 色], ……]」で指定する
  *      @param {(Number|String)[]} [options.shadowFill] - 塗りつぶし部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
  *      @param {(Number|String)[]} [options.shadowStroke] - 輪郭部分に対する影の描画に関する設定。[右方向ずらし量(px), 下方向ずらし量(px), ぼかし量(px), 影の色(String)]の順で指定する。省略した場合は影を描画しない。
  *  
@@ -167,6 +171,92 @@ OffscreenCanvasRenderingContext2D.prototype.axt_draw = function (kind, options) 
                 specifiedPos.right = options.pos[0];
             default:
                 break;
+        }
+    }
+
+    /** ================================================================
+     * options.fill・options.strokeを解析して、線形グラデーション記法ならばCanvasGradientオブジェクトに変換する
+    ================================================================= */
+    /* options.fill */
+    if (posNeedTypes.includes(kind)) {
+        /* プロパティを可能ならJSON文字列として解析する */
+        const parsed = (x => { try { return JSON.parse(x) } catch (err) { return x } })(options.fill);
+        /* グラデーション記法(Array)の場合 */
+        if (parsed instanceof Array) {
+            /* 0番目はグラデーションの方向(neswを使って指定)なので取り出す */
+            const direction = parsed.shift();
+            /* 始点・終点の座標を取得 */
+            let startX = specifiedPos.center,
+                startY = specifiedPos.middle,
+                endX = specifiedPos.center,
+                endY = specifiedPos.middle;
+            {
+                if (direction.includes("n")) {
+                    startY = specifiedPos.bottom;
+                    endY = specifiedPos.top;
+                }
+                if (direction.includes("s")) {
+                    startY = specifiedPos.top;
+                    endY = specifiedPos.bottom;
+                }
+                if (direction.includes("e")) {
+                    startX = specifiedPos.left;
+                    endX = specifiedPos.right;
+                }
+                if (direction.includes("w")) {
+                    startX = specifiedPos.right;
+                    endX = specifiedPos.left;
+                }
+            }
+            /* グラデーションオブジェクトを作成 */
+            const gradient = this.createLinearGradient(startX, startY, endX, endY);
+            /* colorStopを追加 */
+            parsed.forEach(el => {
+                gradient.addColorStop(el[0], el[1]);
+            });
+            /* options.fillを上書き */
+            options.fill = gradient;
+        }
+    }
+    /* options.stroke */
+    if (posNeedTypes.includes(kind)) {
+        /* プロパティを可能ならJSON文字列として解析する */
+        const parsed = (x => { try { return JSON.parse(x) } catch (err) { return x } })(options.stroke);
+        /* グラデーション記法(Array)の場合 */
+        if (parsed instanceof Array) {
+            /* 0番目はグラデーションの方向(neswを使って指定)なので取り出す */
+            const direction = parsed.shift();
+            /* 始点・終点の座標を取得 */
+            let startX = specifiedPos.center,
+                startY = specifiedPos.middle,
+                endX = specifiedPos.center,
+                endY = specifiedPos.middle;
+            {
+                if (direction.includes("n")) {
+                    startY = specifiedPos.bottom;
+                    endY = specifiedPos.top;
+                }
+                if (direction.includes("s")) {
+                    startY = specifiedPos.top;
+                    endY = specifiedPos.bottom;
+                }
+                if (direction.includes("e")) {
+                    startX = specifiedPos.left;
+                    endX = specifiedPos.right;
+                }
+                if (direction.includes("w")) {
+                    startX = specifiedPos.right;
+                    endX = specifiedPos.left;
+                }
+            }
+            /* グラデーションオブジェクトを作成 */
+            const gradient = this.createLinearGradient(startX, startY, endX, endY);
+            /* colorStopを追加 */
+            parsed.forEach(el => {
+                gradient.addColorStop(el[0], el[1]);
+            });
+            /* options.strokeを上書き */
+            options.stroke = gradient;
         }
     }
 
