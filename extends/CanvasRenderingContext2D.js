@@ -136,7 +136,6 @@ CanvasRenderingContext2D.prototype.axt_draw = function (kind, options) {
         specifiedPos.right = options?.range?.at(3) ?? this.canvas.width;
         specifiedPos.middle = (specifiedPos.top + specifiedPos.bottom) / 2;
         specifiedPos.center = (specifiedPos.left + specifiedPos.right) / 2;
-        console.log(specifiedPos);
     }
     /** @type {String[]} - 左中右のX座標・上中下のY座標が必要なkindの一覧 */
     const posNeedTypes = [
