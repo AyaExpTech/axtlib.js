@@ -144,11 +144,11 @@ globalThis.EasingConverter = class EasingConverter {
             case "Expo_InOut":
                 return y < 0.5 ? Math.log2(y * 2) / 20 + 1 / 2 : 1 / 2 - Math.log2(2 - 2 * y) / 20;
             case "Circ_In":
-                return Math.sqrt(2 * y - 2 * y ** 2);
+                return Math.sqrt(2 * y - y ** 2);
             case "Circ_Out":
-                return 1 + Math.sqrt(1 - y ** 2);
+                return 1 - Math.sqrt(1 - y ** 2);
             case "Circ_InOut":
-                return y < 0.5 ? y - y ** 2 : 1 - Math.sqrt(4 * y - 4 * y ** 2) / 2;
+                return y < 0.5 ? Math.sqrt(y - y ** 2) : 1 - Math.sqrt(y - y ** 2);
             default:
                 return y;
         }
