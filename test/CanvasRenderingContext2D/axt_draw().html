@@ -20,28 +20,30 @@
                 "image": image
             });*/
             canvas.ctx.axt_draw("rectangle", {
-                "fill": ["s", [0, "#00f"], [1, "#0f0"]],
-                "size": [500, 500],
-                "pos": [300, 300],
-                "align": ""
+                "fill": "black",
+                "size": [1000, 1000],
+                "pos": [500, 1000],
+                "align": "s"
             });
-            canvas.ctx.axt_draw("ellipse", {
-                "fill": ["se", [0, "#f000"], [1, "#f00f"]],
-                "stroke": ["se", [0, "#0f0f"], [1, "#0f00"]],
-                "size": [500, 500],
-                "pos": [700, 700],
-                "align": "",
-                "thickness": 3
+            canvas.ctx.axt_draw("text", {
+                "fill": "white",
+                "pos": [500, 500],
+                "align": "e",
+                "text": "Hello, World!",
+                "mirror": "y"
             });
-            canvas.ctx.axt_draw("path", {
-                "stroke": '["e", [0, "#f00"], [1, "#00f"]]',
-                "range": [0, 0, 500, 1000],
-                "shadowStroke": [0, 0, 8, "#fff"],
-                "d": "M 100,900 C 300,900 250,100 500,100 S 700,900 900,900",
-                "thickness": 4
+            canvas.ctx.axt_draw("text", {
+                "fill": "white",
+                "stroke": "red",
+                "shadowFill": [0, 0, 16, "#eee"],
+                "pos": [500, 500],
+                "align": "w",
+                "text": "長い文章でもmaxWidthを指定することで指定した幅に収めることができます",
+                "font": "italic small-caps bold 2rem/2 monospace",
+                "maxWidth": 500,
+                "thickness": 2
             });
             // test end
-
         })
     </script>
 </head>

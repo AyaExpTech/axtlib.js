@@ -51,6 +51,7 @@ OffscreenCanvasRenderingContext2D.prototype.setShadow = function (x = 0, y = 0, 
  *  ※以下、`kind`が`"text"`の場合のみ有効
  *      @param {String} options.text - 描画するテキスト
  *      @param {String} options.font - 使用するフォントに関する設定 (CSSの`font`と同じ形式の文字列)
+ *      @param {""|"x"|"y"|"xy"} options.mirror - 鏡文字を有効にするかの設定。`"y"`で垂直方向(上下)、`"x"`で水平方向(左右)、`"xy"`で両方向
  *      @param {Number?} options.maxWidth - テキストの最大描画幅(px)
  *  
  *  ※以下、`kind`が`"path"`の場合のみ有効
@@ -415,12 +416,19 @@ OffscreenCanvasRenderingContext2D.prototype.axt_draw = function (kind, options) 
         [this.textAlign, this.textBaseline] = [specifiedAlign.horizontal, specifiedAlign.vertical];
         /* ==== fontプロパティの文字列をoptions.fontから作成して設定する ==== */
         this.font = options?.font ?? "10px sans-serif";
+        /* ==== 鏡文字設定を読み込む。mirrorXとmirrorYについて、それぞれ反転なら-1、そのままなら1にする ==== */
+        const mirrorX = options.mirror?.includes("x") ? -1 : 1;
+        const mirrorY = options.mirror?.includes("y") ? -1 : 1;
+        /* ==== 鏡文字設定に従ってscaleで座標系を反転する ==== */
+        this.scale(mirrorX, mirrorY);
         /* ==== テキストを描画する ==== */
         changeShadowSetting_fill();
-        options.fill == null ? void 0 : this.fillText(options.text, options.pos[0], options.pos[1], options.maxWidth || undefined);
+        options.fill == null ? void 0 : this.fillText(options.text, mirrorX * options.pos[0], mirrorY * options.pos[1], options.maxWidth || undefined);
         changeShadowSetting_stroke();
-        options.stroke == null ? void 0 : this.strokeText(options.text, options.pos[0], options.pos[1], options.maxWidth || undefined);
+        options.stroke == null ? void 0 : this.strokeText(options.text, mirrorX * options.pos[0], mirrorY * options.pos[1], options.maxWidth || undefined);
         intlShadowSetting();
+        /* ==== scaleをもとに戻す ==== */
+        this.scale(mirrorX, mirrorY);
         /* ==== メモしてあった各プロパティをもとに戻す ==== */
         [this.fillStyle, this.strokeStyle, this.lineWidth] = [predecessor.fillStyle, predecessor.strokeStyle, predecessor.lineWidth];
         [this.font, this.textAlign, this.textBaseline] = [predecessor.font, predecessor.textAlign, predecessor.textBaseline];
